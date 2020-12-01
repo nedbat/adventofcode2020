@@ -20,11 +20,30 @@ def test_pair_with_sum():
     assert pair_with_sum(TEST, 2020) == (1721, 299)
 
 
-def part1():
+def my_input():
     with open("day01_input.txt") as f:
-        data = list(map(int, f))
+        return list(map(int, f))
 
-    a, b = pair_with_sum(data, 2020)
+def part1():
+    a, b = pair_with_sum(my_input(), 2020)
     print(f"Part 1: {a * b}")
 
-part1()
+
+def three_with_sum(nums, goal):
+    snums = set(nums)
+    for a, b in itertools.product(nums, repeat=2):
+        needed = goal - (a + b)
+        if needed in snums:
+            return set([a, b, needed])
+
+def test_three_with_sum():
+    assert three_with_sum(TEST, 2020) == {979, 366, 675}
+
+
+def part2():
+    a, b, c = three_with_sum(my_input(), 2020)
+    print(f"Part 2: {a * b * c}")
+
+if __name__ == "__main__":
+    part1()
+    part2()
