@@ -32,3 +32,23 @@ def part1():
 
 if __name__ == "__main__":
     part1()
+
+def is_valid_password2(lo, hi, char, password):
+    num = (password[lo - 1] == char) + (password[hi - 1] == char)
+    return num == 1
+
+def test_is_valid_password2():
+    answers = [True, False, False]
+    for args, answer in zip(parse_input(TEST.splitlines()), answers):
+        assert is_valid_password2(*args) == answer
+
+def part2():
+    valid = 0
+    with open("day02_input.txt") as f:
+        for lo, hi, char, password in parse_input(f):
+            if is_valid_password2(lo, hi, char, password):
+                valid += 1
+    print(f"Part 2: There are {valid} valid passwords")
+
+if __name__ == "__main__":
+    part2()
