@@ -57,3 +57,17 @@ def part1():
 
 if __name__ == '__main__':
     part1()
+
+def part2_calc(fname):
+    trees = Trees.from_file(fname)
+    total = 1
+    for right, down in [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]:
+        num_trees = seq_len(trees_encountered(trees, right, down))
+        total *= num_trees
+    return total
+
+def test_part2():
+    assert part2_calc("day03_test.txt") == 336
+
+if __name__ == '__main__':
+    print(f"Part 2: answer: {part2_calc('day03_input.txt')}")
