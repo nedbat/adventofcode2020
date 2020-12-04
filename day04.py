@@ -76,3 +76,48 @@ def part1():
 
 if __name__ == "__main__":
     part1()
+
+def valid_byr(val):
+    return len(val) == 4 and (1920 <= int(val) <= 2002)
+
+def valid_iyr(val):
+    return len(val) == 4 and (2010 <= int(val) <= 2020)
+
+def valid_eyr(val):
+    return len(val) == 4 and (2020 <= int(val) <= 2030)
+
+def valid_hgt(val):
+    if m := re.fullmatch(r"(\d+)(cm|in)", val):
+        num = int(m[1])
+        if m[2] == "cm":
+            return 150 <= num <= 193
+        else:
+            return 59 <= num <= 76
+    return False
+
+def valid_hcl(val):
+    return bool(re.fullmatch(r"#[0-9a-f]{6}", val))
+
+def valid_ecl(val):
+    return val in {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}
+
+def valid_pid(val):
+    return bool(re.fullmatch(r"\d{9}", val))
+
+def valid_passport_2(pp):
+    required = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
+    for key in required:
+        if key not in pp:
+            return False
+        if not globals()[f"valid_{key}"](pp[key]):
+            return False
+    return True
+
+def num_valid2_in_file(fname):
+    return sum(1 for pp in passports_from_file(fname) if valid_passport_2(pp))
+    
+def part2():
+    print(f"Part 2: There are {num_valid2_in_file('day04_input.txt')} valid passports")
+
+if __name__ == "__main__":
+    part2()
