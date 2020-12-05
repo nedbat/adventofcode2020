@@ -27,3 +27,13 @@ def part1():
 
 if __name__ == '__main__':
     part1()
+
+def part2():
+    with open("day05_input.txt") as f:
+        seat_ids = {boarding_pass_location(boarding_pass)[2] for boarding_pass in f}
+    for sid in range(min(seat_ids), max(seat_ids)+1):
+        if sid not in seat_ids and sid-1 in seat_ids and sid+1 in seat_ids:
+            print(f"Part 2: your seat ID is {sid}.")
+
+if __name__ == '__main__':
+    part2()
