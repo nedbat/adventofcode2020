@@ -1,6 +1,5 @@
 # https://adventofcode.com/2020/day/6
 
-import functools
 import itertools
 import textwrap
 
@@ -44,7 +43,7 @@ def part2():
     total = 0
     with open("day06_input.txt") as f:
         for answers in clauses_from_lines(f):
-            all_answered = functools.reduce(lambda s1, s2: s1 & s2, (set(a) for a in answers.splitlines()))
+            all_answered = set.intersection(*(set(a) for a in answers.splitlines()))
             total += len(all_answered)
     print(f"Part 2: The sum of the number of questions is {total}")
 
