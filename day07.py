@@ -1,6 +1,7 @@
 # https://adventofcode.com/2020/day/7
 
 import re
+import pytest
 
 def parse_bags(lines):
     bags = {}
@@ -71,3 +72,26 @@ def part1():
 
 if __name__ == "__main__":
     part1()
+
+def total_contained(bags, color):
+    total = 0
+    for num, in_color in bags[color]:
+        total += num * (1 + total_contained(bags, in_color))
+    return total
+
+@pytest.mark.parametrize("fname, total", [
+    ("day07_test.txt", 32),
+    ("day07_test2.txt", 126),
+])
+def test_total_contained(fname, total):
+    with open(fname) as f:
+        assert total_contained(parse_bags(f), "shiny gold") == total
+
+def part2():
+    with open("day07_input.txt") as f:
+        bags = parse_bags(f)
+    total = total_contained(bags, "shiny gold")
+    print(f"Part 1: {total} individual bags are required inside your single shiny gold bag")
+
+if __name__ == "__main__":
+    part2()
