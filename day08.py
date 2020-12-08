@@ -1,0 +1,54 @@
+# https://adventofcode.com/2020/day/8
+
+from enum import Enum
+
+import pytest
+
+
+class Op(Enum):
+    acc = 1
+    jmp = 2
+    nop = 3
+
+def read_program(fname):
+    program = []
+    with open(fname) as f:
+        for line in f:
+            op, num = line.split()
+            program.append((Op.__members__[op], int(num)))
+    return program
+
+class Cpu:
+    def __init__(self, program_name):
+        self.program = read_program(program_name)
+        self.ip = 0
+        self.acc = 0
+        self.ips_executed = set()
+
+    def step(self):
+        op, num = self.program[self.ip]
+        self.ips_executed.add(self.ip)
+        if op == Op.acc:
+            self.acc += num
+        elif op == Op.jmp:
+            self.ip += num - 1
+        elif op == Op.nop:
+            pass
+        self.ip += 1
+
+    def about_to_repeat(self):
+        return self.ip in self.ips_executed
+
+    def part1(self):
+        while not self.about_to_repeat():
+            self.step()
+        return self.acc
+
+def test_part1():
+    cpu = Cpu("day08_test.txt")
+    assert cpu.part1() == 5
+
+if __name__ == "__main__":
+    cpu = Cpu("day08_input.txt")
+    acc = cpu.part1()
+    print(f"Part 1: Immediately before any instruction is executed a second time, {acc} is in the accumulator.")
