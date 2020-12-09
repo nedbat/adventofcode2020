@@ -43,8 +43,11 @@ def weakness(fname, window):
     for istart in range(len(nums)):
         for iend in range(istart + 1, len(nums)):
             chunk = nums[istart:iend+1]
-            if sum(chunk) == bad1:
+            s = sum(chunk) 
+            if s == bad1:
                 return min(chunk) + max(chunk)
+            elif s > bad1:
+                break
 
 def test_weakness():
     assert weakness("day09_test.txt", 5) == 62
