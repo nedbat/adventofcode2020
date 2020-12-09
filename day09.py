@@ -35,3 +35,23 @@ def part1():
 
 if __name__ == '__main__':
     part1()
+
+def weakness(fname, window):
+    nums = list(numbers_from_file(fname))
+    bad1 = next(bad_numbers(nums, window))
+    # Brute force
+    for istart in range(len(nums)):
+        for iend in range(istart + 1, len(nums)):
+            chunk = nums[istart:iend+1]
+            if sum(chunk) == bad1:
+                return min(chunk) + max(chunk)
+
+def test_weakness():
+    assert weakness("day09_test.txt", 5) == 62
+
+def part2():
+    ans = weakness("day09_input.txt", 25)
+    print(f"Part 2: the encryption weakness is {ans}")
+
+if __name__ == '__main__':
+    part2()
