@@ -47,16 +47,52 @@ class Ship:
 
         return self.__class__(x, y, dirx, diry)
 
-def distance(steps):
-    ship = Ship()
+def distance(ship, steps):
     for step in steps:
         ship = ship.step(*step)
     return abs(ship.x) + abs(ship.y)
 
 def test_distance():
-    ans = distance(read_steps("day12_test.txt"))
+    ans = distance(Ship(), read_steps("day12_test.txt"))
     assert ans == 25
 
 if __name__ == '__main__':
-    ans = distance(read_steps("day12_input.txt"))
+    ans = distance(Ship(), read_steps("day12_input.txt"))
     print(f"Part 1: the ship's distance is {ans}")
+
+@dataclasses.dataclass
+class Ship2:
+    x: int = 0
+    y: int = 0
+    wpdx: int = 10
+    wpdy: int = 1
+
+    def step(self, op, num):
+        x, y, wpdx, wpdy = dataclasses.astuple(self)
+        if op in DIRS:
+            dx, dy = DIRS[op]
+            wpdx += dx * num
+            wpdy += dy * num
+        elif op == "F":
+            x += wpdx * num
+            y += wpdy * num
+        else:
+            assert op in "LR"
+            assert num in [90, 180, 270]
+            if num == 180:
+                wpdx *= -1
+                wpdy *= -1
+            elif (op, num) in [("R", 90), ("L", 270)]:
+                wpdx, wpdy = wpdy, -wpdx
+            elif (op, num) in [("L", 90), ("R", 270)]:
+                wpdx, wpdy = -wpdy, wpdx
+
+        return self.__class__(x, y, wpdx, wpdy)
+
+def test_distance2():
+    ans = distance(Ship2(), read_steps("day12_test.txt"))
+    assert ans == 286
+
+if __name__ == '__main__':
+    ans = distance(Ship2(), read_steps("day12_input.txt"))
+    print(f"Part 2: the ship's distance is {ans}")
