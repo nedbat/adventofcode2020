@@ -43,3 +43,22 @@ def test_part1(start, ans):
 if __name__ == "__main__":
     ans = part1([1,0,18,10,19,6])
     print(f"Part 1: {ans}")
+
+def part2(start):
+    return nth(memory_game(start), 30_000_000)
+
+@pytest.mark.parametrize("start, ans", [
+    ([0, 3, 6], 175594),
+    ([1, 3, 2], 2578),
+    ([2, 1, 3], 3544142),
+    ([1, 2, 3], 261214),
+    ([2, 3, 1], 6895259),
+    ([3, 2, 1], 18),
+    ([3, 1, 2], 362),
+])
+def test_part2(start, ans):
+    assert part2(start) == ans
+
+if __name__ == "__main__":
+    ans = part2([1,0,18,10,19,6])
+    print(f"Part 2: {ans}")
