@@ -16,6 +16,9 @@ class MultiRange:
         nums = parse_nums(text)
         return cls(*zip(nums[::2], nums[1::2]))
 
+    def __repr__(self):
+        return f"<MultiRange: {self.ranges}>"
+
     def __contains__(self, val):
         return any(val in r for r in self.ranges)
 
@@ -319,3 +322,69 @@ INPUT = {
 
 if __name__ == '__main__':
     print(f"Part 1: {part1(**INPUT)}")
+
+def the_element(s):
+    # Ick.
+    return list(s)[0]
+
+def field_order(rules, nearby):
+    mranges = list(map(MultiRange.from_text, rules))
+    rule_names = [rule.partition(":")[0] for rule in rules]
+
+    # Discard the invalid tickets.
+    valid_nearby = []
+    for ticket in nearby:
+        for val in ticket:
+            if not any(val in mr for mr in mranges):
+                break
+        else:
+            valid_nearby.append(ticket)
+
+    # Find possible field names for each field.
+    field_names = []
+    nearby_field_values = list(zip(*valid_nearby))
+    for field_num, values in enumerate(nearby_field_values):
+        possible_names = set()
+        for name, mrange in zip(rule_names, mranges):
+            if all(val in mrange for val in values):
+                possible_names.add(name)
+        field_names.append(possible_names)
+
+    # If a name is the only possibility for a field, it can't be the name
+    # of another field. Whittle them down.
+    while sum(len(names) for names in field_names) > len(field_names):
+        determined = set(the_element(names) for names in field_names if len(names) == 1)
+        whittled = [names if len(names) == 1 else names - determined for names in field_names]
+        field_names = whittled
+
+    field_names = [the_element(names) for names in field_names]
+    assert len(set(field_names)) == len(field_names), f"HUH? {field_names}"
+    return field_names
+
+TEST2 = {
+    "rules": [
+        "class: 0-1 or 4-19",
+        "row: 0-5 or 8-19",
+        "seat: 0-13 or 16-19",
+    ],
+    "yours": [11,12,13],
+    "nearby": [
+        [3,9,18],
+        [15,1,5],
+        [5,14,9],
+    ],
+}
+
+def test_field_order():
+    assert field_order(TEST2["rules"], TEST2["nearby"]) == ["row", "class", "seat"]
+
+def part2(rules, yours, nearby):
+    field_names = field_order(rules, nearby)
+    prod = 1
+    for i, name in enumerate(field_names):
+        if name.startswith("departure"):
+            prod *= yours[i]
+    return prod
+
+if __name__ == '__main__':
+    print(f"Part 2: {part2(**INPUT)}")
