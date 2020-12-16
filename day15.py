@@ -1,24 +1,24 @@
 # https://adventofcode.com/2020/day/15
 
-import collections
 import itertools
 
 import pytest
 
 def memory_game(start_nums):
-    when = collections.defaultdict(list)
+    when = {}
     for turn, num in enumerate(start_nums, start=1):
-        when[num].append(turn)
+        when[num] = turn
         yield num
 
+    num = 0
     for turn in itertools.count(start=turn + 1):
-        num_turns = when[num]
-        if len(num_turns) == 1:
-            num = 0
-        else:
-            num = num_turns[-1] - num_turns[-2]
-        when[num].append(turn)
         yield num
+        if num in when:
+            next_num = turn - when[num]
+        else:
+            next_num = 0
+        when[num] = turn
+        num = next_num
 
 def nth(seq, n):
     for i, val in enumerate(seq, start=1):
