@@ -1,6 +1,18 @@
 import functools
 import math
 
+def iterate(fn, val):
+    while True:
+        yield val
+        val = fn(val)
+
+def fix_point(seq):
+    last = None
+    for val in seq:
+        if val == last:
+            return last
+        last = val
+
 def product(nums):
     return functools.reduce((lambda a, b: a * b), nums)
 

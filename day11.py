@@ -1,5 +1,7 @@
 # https://adventofcode.com/2020/day/11
 
+from helpers import iterate, fix_point
+
 def read_seats(fname):
     seats = {}
     with open(fname) as f:
@@ -111,18 +113,6 @@ def test_next():
         print(seats.ascii())
         print("-" * 40)
         seats = seats.next()
-
-def iterate(fn, val):
-    while True:
-        yield val
-        val = fn(val)
-
-def fix_point(seq):
-    last = None
-    for val in seq:
-        if val == last:
-            return last
-        last = val
 
 def part2(fname):
     seats = Seats.from_file(fname)
