@@ -17,6 +17,7 @@ TEST = """\
 ###
 """
 
+import functools
 import itertools
 
 from helpers import iterate, nth
@@ -129,3 +130,69 @@ def test_part2():
 if __name__ == '__main__':
     ans = part2(cells_from_text2(INPUT))
     print(f"Part 2: {ans} cubes")
+
+# Do it again, but with number of dimensions as a parameter, just to see how
+# it would come out.
+
+def xy_from_text(text):
+    xy = set()
+    for y, row in enumerate(text.splitlines()):
+        for x, char in enumerate(row):
+            if char == "#":
+                xy.add((x, y))
+    return xy
+
+def ncells_from_text(text, ndim):
+    cells = set()
+    for x, y in xy_from_text(text):
+        cells.add((x, y) + (0,) * (ndim - 2))
+    return cells
+
+@functools.lru_cache
+def deltas(ndim):
+    dcs = set(itertools.product((-1, 0, 1), repeat=ndim))
+    dcs.remove((0,) * ndim)
+    return dcs
+
+def neighborsn(coords):
+    for dc in deltas(len(coords)):
+        yield tuple(a + b for a, b in zip(coords, dc))
+
+def rangen(startc, endc):
+    ranges = [range(start, end) for start, end in zip(startc, endc)]
+    return itertools.product(*ranges)
+
+def any_element(s):
+    return next(iter(s))
+
+def next_genn(cells):
+    ndim = len(any_element(cells))
+    ncells = set()
+    startc = [min(c[d] for c in cells) - 1 for d in range(ndim)]
+    endc = [max(c[d] for c in cells) + 2 for d in range(ndim)]
+    for c in rangen(startc, endc):
+        ncount = sum(1 for nc in neighborsn(c) if nc in cells)
+        if c in cells:
+            if ncount in (2, 3):
+                ncells.add(c)
+        else:
+            if ncount == 3:
+                ncells.add(c)
+    return ncells
+
+def generationsn(cells):
+    return iterate(next_genn, cells)
+
+def partn(cells):
+    cells6 = nth(generationsn(cells), 6)
+    return len(cells6)
+
+def test_part1n():
+    assert partn(ncells_from_text(TEST, 3)) == 112
+
+def test_part2n():
+    assert partn(ncells_from_text(TEST, 4)) == 848
+
+if __name__ == '__main__':
+    print(f"Part 1: {partn(ncells_from_text(INPUT, 3))}")
+    print(f"Part 2: {partn(ncells_from_text(INPUT, 4))}")
