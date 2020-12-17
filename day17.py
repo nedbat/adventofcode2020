@@ -20,7 +20,7 @@ TEST = """\
 import functools
 import itertools
 
-from helpers import iterate, nth
+from helpers import iterate, nth, Timer
 
 def cells_from_text(text):
     cells = set()
@@ -71,7 +71,7 @@ def part1(cells):
 def test_part1():
     assert part1(cells_from_text(TEST)) == 112
 
-if __name__ == '__main__':
+if 0 and __name__ == '__main__':
     ans = part1(cells_from_text(INPUT))
     print(f"Part 1: {ans} cubes")
 
@@ -127,7 +127,7 @@ def part2(cells):
 def test_part2():
     assert part2(cells_from_text2(TEST)) == 848
 
-if __name__ == '__main__':
+if 0 and __name__ == '__main__':
     ans = part2(cells_from_text2(INPUT))
     print(f"Part 2: {ans} cubes")
 
@@ -195,4 +195,6 @@ def test_part2n():
 
 if __name__ == '__main__':
     print(f"Part 1: {partn(ncells_from_text(INPUT, 3))}")
-    print(f"Part 2: {partn(ncells_from_text(INPUT, 4))}")
+    with Timer() as timer:
+        ans = partn(ncells_from_text(INPUT, 4))
+    print(f"Part 2: {ans}, {timer.duration:.1f}s")

@@ -1,5 +1,8 @@
+# Helpers for use in solutions
+
 import functools
 import math
+import time
 
 def iterate(fn, val):
     while True:
@@ -17,6 +20,14 @@ def fix_point(seq):
         if val == last:
             return last
         last = val
+
+class Timer:
+    def __enter__(self):
+        self.start = time.time()
+        return self
+
+    def __exit__(self, *args):
+        self.duration = time.time() - self.start
 
 def product(nums):
     return functools.reduce((lambda a, b: a * b), nums)
