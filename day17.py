@@ -166,6 +166,7 @@ def any_element(s):
     return next(iter(s))
 
 def next_genn(cells):
+    # Obsolete: scan a complete hyper-cube of the space.
     ndim = len(any_element(cells))
     ncells = set()
     startc = [min(c[d] for c in cells) - 1 for d in range(ndim)]
@@ -180,11 +181,22 @@ def next_genn(cells):
                 ncells.add(c)
     return ncells
 
-def generationsn(cells):
-    return iterate(next_genn, cells)
+def next_genn_targeted(cells):
+    # Only consider cells next to live cells.
+    possible = set(nc for c in cells for nc in neighborsn(c))
+    ncells = set()
+    for pc in possible:
+        ncount = sum(1 for nc in neighborsn(pc) if nc in cells)
+        if pc in cells:
+            if ncount in (2, 3):
+                ncells.add(pc)
+        else:
+            if ncount == 3:
+                ncells.add(pc)
+    return ncells
 
 def partn(cells):
-    cells6 = nth(generationsn(cells), 6)
+    cells6 = nth(iterate(next_genn_targeted, cells), 6)
     return len(cells6)
 
 def test_part1n():
