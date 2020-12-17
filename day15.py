@@ -2,6 +2,8 @@
 
 import itertools
 
+from helpers import nth
+
 import pytest
 
 def memory_game(start_nums):
@@ -20,13 +22,8 @@ def memory_game(start_nums):
         when[num] = turn
         num = next_num
 
-def nth(seq, n):
-    for i, val in enumerate(seq, start=1):
-        if i == n:
-            return val
-
 def part1(start):
-    return nth(memory_game(start), 2020)
+    return nth(memory_game(start), 2020-1)
 
 @pytest.mark.parametrize("start, ans", [
     ([0, 3, 6], 436),
@@ -45,7 +42,7 @@ if __name__ == "__main__":
     print(f"Part 1: {ans}")
 
 def part2(start):
-    return nth(memory_game(start), 30_000_000)
+    return nth(memory_game(start), 30_000_000-1)
 
 @pytest.mark.parametrize("start, ans", [
     ([0, 3, 6], 175594),

@@ -6,6 +6,11 @@ def iterate(fn, val):
         yield val
         val = fn(val)
 
+def nth(seq, n):
+    for i, val in enumerate(seq):
+        if i == n:
+            return val
+
 def fix_point(seq):
     last = None
     for val in seq:
