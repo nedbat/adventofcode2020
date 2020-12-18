@@ -4,6 +4,7 @@ import re
 
 import pytest
 
+py_eval = eval
 
 def eval(expr):
     toks = iter(re.findall(r"(\d+|\S)", expr) + ["eof"])
@@ -31,7 +32,6 @@ def _eval(toks):
                 val += num
             else:
                 val *= num
-
 
 @pytest.mark.parametrize("expr, ans", [
     ("17", 17),
@@ -112,3 +112,60 @@ if __name__ == "__main__":
     with open("day18_input.txt") as f:
         ans = sum(eval2(line) for line in f)
     print(f"Part 2: {ans}")
+
+# "Cheat": use Python eval.
+
+class Part1Num:
+    def __init__(self, n):
+        self.val = int(n)
+
+    def __add__(self, other):
+        return self.__class__(self.val + other.val)
+
+    def __sub__(self, other):
+        return self.__class__(self.val * other.val)
+
+def eval_1_cheat(expr):
+    expr = expr.replace("*", "-")
+    expr = re.sub(r"(\d+)", r"Part1Num(\1)", expr)
+    return py_eval(expr).val
+
+@pytest.mark.parametrize("expr, ans", [
+    ("17", 17),
+    ("1 + 2 * 3 + 4 * 5 + 6", 71),
+    ("1 + (2 * 3) + (4 * (5 + 6))", 51),
+    ("2 * 3 + (4 * 5)", 26),
+    ("5 + (8 * 3 + 9 + 3 * 4 * 3)", 437),
+    ("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", 12240),
+    ("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", 13632),
+])
+def test_eval_1_cheat(expr, ans):
+    assert eval_1_cheat(expr) == ans
+
+
+class Part2Num:
+    def __init__(self, n):
+        self.val = int(n)
+
+    def __mod__(self, other):
+        return self.__class__(self.val + other.val)
+
+    def __sub__(self, other):
+        return self.__class__(self.val * other.val)
+
+def eval_2_cheat(expr):
+    expr = expr.replace("*", "-").replace("+", "%")
+    expr = re.sub(r"(\d+)", r"Part2Num(\1)", expr)
+    return py_eval(expr).val
+
+@pytest.mark.parametrize("expr, ans", [
+    ("17", 17),
+    ("1 + 2 * 3 + 4 * 5 + 6", 231),
+    ("1 + (2 * 3) + (4 * (5 + 6))", 51),
+    ("2 * 3 + (4 * 5)", 46),
+    ("5 + (8 * 3 + 9 + 3 * 4 * 3)", 1445),
+    ("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", 669060),
+    ("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", 23340),
+])
+def test_eval_2_cheat(expr, ans):
+    assert eval_2_cheat(expr) == ans
