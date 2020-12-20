@@ -1,6 +1,7 @@
 # Helpers for use in solutions
 
 import functools
+import itertools
 import math
 import time
 
@@ -69,3 +70,6 @@ def modular_inverse(a, m):
         x += m0
 
     return x
+
+def range2d(endx, endy):
+    yield from itertools.product(range(endx), range(endy))
