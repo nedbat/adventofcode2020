@@ -57,23 +57,30 @@ def test_edges():
         "#..##.#...",
         ]
 
+class TileSet:
+    def __init__(self, tiles):
+        self.tiles = tiles
+
+    @classmethod
+    def from_file(cls, fname):
+        return cls(list(tiles_from_file(fname)))
+
+    def corners(self):
+        c = collections.Counter()
+        for t in self.tiles:
+            c.update(t.edges())
+
+        for t in self.tiles:
+            counts = [c[edge] for edge in t.edges()]
+            if sum(counts) == 12:
+                yield t
+
 def part1(fname):
     # Find the four corner tiles. Both the test data and the real input have
     # unique matching, so we can just look for the four tiles that have two
     # matching edges and two non-matching edges.
-    tiles = list(tiles_from_file(fname))
-    c = collections.Counter()
-    for t in tiles:
-        c.update(t.edges())
-
-    corners = []
-    for t in tiles:
-        counts = [c[edge] for edge in t.edges()]
-        if sorted(counts) == [1, 1, 1, 1, 2, 2, 2, 2]:
-            corners.append(t)
-
-    assert len(corners) == 4
-    return product(corner.id for corner in corners)
+    tileset = TileSet.from_file(fname)
+    return product(corner.id for corner in tileset.corners())
 
 def test_part1():
     assert part1("day20_test.txt") == 20899048083289
