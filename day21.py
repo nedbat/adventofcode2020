@@ -52,3 +52,15 @@ def test_part1():
 if __name__ == '__main__':
     ans = part1(open("day21_input.txt"))
     print(f"Part 1: {ans}")
+
+def part2(lines):
+    ingred_lists, allergen_map = parse(lines)
+    allergens = determine_allergens(allergen_map)
+    return ",".join(sorted(allergens, key=allergens.get))
+
+def test_part2():
+    assert part2(TEST) == "mxmxvkd,sqjhc,fvjkl"
+
+if __name__ == '__main__':
+    ans = part2(open("day21_input.txt"))
+    print(f"Part 2: {ans}")
